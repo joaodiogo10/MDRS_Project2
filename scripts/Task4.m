@@ -82,7 +82,7 @@ n = 10;
 
 %compute the most available path disjoint with each of k must available
 %paths
-alternativePaths = cell(1,nFlows);
+disjointPaths = cell(1,nFlows);
 
 for flow = 1:nFlows
     for k = 1:length(sP{flow})
@@ -99,7 +99,7 @@ for flow = 1:nFlows
         [tmpSP, tmpNSP] = calculatePaths(tmpAlog,T,1);
     
          if ~isempty(tmpSP{flow})
-            alternativePaths{flow}{k} = tmpSP{flow}{1};
+            disjointPaths{flow}{k} = tmpSP{flow}{1};
          end
     end
 end
@@ -112,9 +112,9 @@ for flow = 1:nFlows
         fprintf('[ ');
         fprintf("%g ",sP{flow}{k});
         fprintf(']\n');
-        fprintf("Alternative disjount path: ");
+        fprintf("Disjoint path: ");
         fprintf('[ ');
-        fprintf("%g ",alternativePaths{flow}{k});
+        fprintf("%g ",disjointPaths{flow}{k});
         fprintf(']\n\n');
     end
 end
@@ -142,7 +142,7 @@ while toc(t)<time
         best = inf; 
         for k = 1:nSP(i) %pair each pair calculate Loads1To1
             sol(i) = k;
-            Loads= calculateLoads1To1(nNodes,Links,T,sP,alternativePaths,sol);
+            Loads= calculateLoads1To1(nNodes,Links,T,sP,disjointPaths,sol);
             load= max(max(Loads(:,3:4)));
             if load < best
                k_best = k;
@@ -161,8 +161,8 @@ end
 plot(sort(allValues));
 hold on
 
-fprintf('\n------Multi Start Hill Climbing------\n');
-printResults(bestLoad, allValues, sP, alternativePaths, sol, A);
+fprintf('\n------Greedy randomized------\n');
+printResults(bestLoad, allValues, sP, disjointPaths, sol, A);
 
 %-----Multi start hill climbing algorithm-----
 t= tic;
@@ -177,7 +177,7 @@ while toc(t)<time
         best = inf; 
         for k = 1:nSP(i) %pair each pair calculate Loads1To1
             sol(i) = k;
-            Loads= calculateLoads1To1(nNodes,Links,T,sP,alternativePaths,sol);
+            Loads= calculateLoads1To1(nNodes,Links,T,sP,disjointPaths,sol);
             load= max(max(Loads(:,3:4)));
             if load < best
                k_best = k;
@@ -199,7 +199,7 @@ while toc(t)<time
                 if k~=sol(i)
                     aux= sol(i);
                     sol(i)= k;
-                    Loads= calculateLoads1To1(nNodes,Links,T,sP,alternativePaths, sol);
+                    Loads= calculateLoads1To1(nNodes,Links,T,sP,disjointPaths, sol);
                     load1= max(max(Loads(:,3:4)));
                     if load1<best
                         i_best= i;
@@ -227,7 +227,7 @@ plot(sort(allValues));
 hold on
 
 fprintf('\n------Multi Start Hill Climbing------\n');
-printResults(bestLoad, allValues, sP, alternativePaths, sol, A);
+printResults(bestLoad, allValues, sP, disjointPaths, sol, A);
 
 
 %-----Multi start hill climbing algorithm first neighbor-----
@@ -244,7 +244,7 @@ while toc(t)<time
         best = inf; 
         for k = 1:nSP(i) %pair each pair calculate Loads1To1
             sol(i) = k;
-            Loads= calculateLoads1To1(nNodes,Links,T,sP,alternativePaths,sol);
+            Loads= calculateLoads1To1(nNodes,Links,T,sP,disjointPaths,sol);
             load= max(max(Loads(:,3:4)));
             if load < best
                k_best = k;
@@ -271,7 +271,7 @@ while toc(t)<time
                 if k~=sol(i)
                     aux= sol(i);
                     sol(i)= k;
-                    Loads= calculateLoads1To1(nNodes,Links,T,sP,alternativePaths, sol);
+                    Loads= calculateLoads1To1(nNodes,Links,T,sP,disjointPaths, sol);
                     load1= max(max(Loads(:,3:4)));
                     if load1<best
                         i_best= i;
@@ -303,15 +303,15 @@ legend("Greedy Randomized heuristic","Multi start hill climbing heuristic", ...
        "Multi start hill climbing heuristic first neighbor", "location", "best");
 
 fprintf('\n------Multi Start Hill Climbing First Neighbor------\n');
-printResults(bestLoad, allValues, sP, alternativePaths, sol, A);
+printResults(bestLoad, allValues, sP, disjointPaths, sol, A);
 
 
 %display results for 4.b. resolution
-function printResults(bestLoad, allValues, sP, alternativePaths, sol, A)
+function printResults(bestLoad, allValues, sP, disjointPaths, sol, A)
     nFlows = size(sP,2);
     
     pathA1 = ones(1,nFlows);      %must available path availability
-    pathA2 = ones(1,nFlows);      %alternative path availability
+    pathA2 = ones(1,nFlows);      %disjoint path availability
 
     for flow = 1:nFlows
         % Compute flow availability
@@ -323,8 +323,8 @@ function printResults(bestLoad, allValues, sP, alternativePaths, sol, A)
 
     for flow = 1:nFlows
         % Compute flow availability
-        for node = 2:size(alternativePaths{flow}{1},2)
-            availability = A(alternativePaths{flow}{1}(node), alternativePaths{flow}{1}(node-1)); 
+        for node = 2:size(disjointPaths{flow}{1},2)
+            availability = A(disjointPaths{flow}{1}(node), disjointPaths{flow}{1}(node-1)); 
             pathA2(flow) = pathA2(flow) * availability;
         end
     end
@@ -342,9 +342,9 @@ function printResults(bestLoad, allValues, sP, alternativePaths, sol, A)
         fprintf(']\n');
         fprintf("       Must available path availability: %.5f%%\n", pathA1(flow)*100);
         fprintf('       [ ');
-        fprintf("%g ",alternativePaths{flow}{k});
+        fprintf("%g ",disjointPaths{flow}{k});
         fprintf(']\n');
-        fprintf("       Alternative path availability: %.5f%%\n", pathA2(flow)*100);
+        fprintf("       Disjoint path availability: %.5f%%\n", pathA2(flow)*100);
     end
     % ??? 
     meanA = mean((pathA1 + pathA2) ./ 2);

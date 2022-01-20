@@ -4,13 +4,13 @@
 % Links - matrix containing all Links
 % T - flow bandwidth information
 % sP - k must available routing paths for each taffic flow
-% alternativePaths - k alternative paths for each traffic flow
+% disjointPaths - k disjoint paths for each traffic flow
 % sol - indication of each disjount pair we are using
 %
-% Note: a K must available routing path together with a k alternative
+% Note: a K must available routing path together with a k disjoint
 %       path form a disjount pair
 
-function Loads=calculateLoads1To1(nNodes,Links,T,sP,alternativePaths, sol)
+function Loads=calculateLoads1To1(nNodes,Links,T,sP,disjointPaths, sol)
     nFlows = size(sP,2);
     nLinks = size(Links,1);
     %link loads using most available path
@@ -30,9 +30,9 @@ function Loads=calculateLoads1To1(nNodes,Links,T,sP,alternativePaths, sol)
             if length(pathdif)<2 || pathdif(2)-pathdif(1)>1
                 %link is not in must available path
                 auxSP{flow}{1} = path;
-            elseif ~isempty(alternativePaths{flow})
-                %link is in must available path and we have an alternative
-                auxSP{flow}{1} = alternativePaths{flow}{1};
+            elseif ~isempty(disjointPaths{flow})
+                %link is in must available path and we have an disjoint
+                auxSP{flow}{1} = disjointPaths{flow}{1};
             end 
         end
     

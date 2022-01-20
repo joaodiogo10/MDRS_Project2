@@ -77,7 +77,7 @@ for flow = 1:nFlows
     path = sP{flow}{1};
     
     %print flow path
-    fprintf('\nFlow %d most available path:\n', flow);
+    fprintf('\nFlow %d most available path: ', flow);
     fprintf('[ ');
     fprintf("%g ",path);
     fprintf(']\n');
@@ -95,10 +95,10 @@ fprintf("\n---------3.b.---------\n");
 %calculate most available path of each flow
 [sP, nSP]= calculatePaths(Alog,T,1);
 
-alternativePaths = cell(1,nFlows);
+disjointPaths = cell(1,nFlows);
 
 pathA1 = ones(1,nFlows);      %must available path availability
-pathA2 = ones(1,nFlows);      %alternative path availability
+pathA2 = ones(1,nFlows);      %disjoint path availability
 
 for flow = 1:nFlows   
     %compute availability must available path
@@ -118,11 +118,11 @@ for flow = 1:nFlows
     [tmpSP, tmpNSP] = calculatePaths(tmpAlog,T,1);
     
     if ~isempty(tmpSP{flow})
-        alternativePaths{flow} = {tmpSP{flow}{1}};
+        disjointPaths{flow} = {tmpSP{flow}{1}};
 
         % Compute flow availability
-        for node = 2:size(alternativePaths{flow}{1},2)
-            availability = A(alternativePaths{flow}{1}(node), alternativePaths{flow}{1}(node-1)); 
+        for node = 2:size(disjointPaths{flow}{1},2)
+            availability = A(disjointPaths{flow}{1}(node), disjointPaths{flow}{1}(node-1)); 
             pathA2(flow) = pathA2(flow) * availability;
         end
     end
@@ -135,15 +135,15 @@ for flow = 1:nFlows
     fprintf(']\n');
     fprintf("   Must available path availability: %.5f%%\n", pathA1(flow)*100);
 
-    %print alternative path and it's availability
-    fprintf('   Alternative path: ');
+    %print disjoint path and it's availability
+    fprintf('   Disjoint path: ');
     if isempty(tmpSP{flow})
-        fprintf("No alternative disjount path\n\n")
+        fprintf("No disjoint path available\n\n")
     else
         fprintf('[ ');
-        fprintf("%g ",alternativePaths{flow}{1});
+        fprintf("%g ",disjointPaths{flow}{1});
         fprintf(']\n');
-        fprintf("   Alternative path availability: %.5f%%\n", pathA2(flow)*100);
+        fprintf("   Disjoint path availability: %.5f%%\n", pathA2(flow)*100);
     end
 end
 
@@ -163,21 +163,26 @@ fprintf("\n---------3.c.---------\n");
 [sP, nSP]= calculatePaths(Alog,T,1);
 Loads= calculateLinkLoads(nNodes,Links,T,sP,ones(1,nFlows));
 
-%calculate link loads for alternative paths
-%only use flows with an alternative path
+%calculate link loads for disjoint paths
+%only use flows with an disjoint path
 sol = zeros(1,nFlows);
 for i = 1:nFlows
-    sol(i) = ~isempty(alternativePaths{i});
+    sol(i) = ~isempty(disjointPaths{i});
 end
-newLoads= calculateLinkLoads(nNodes,Links,T,alternativePaths,sol);
+newLoads= calculateLinkLoads(nNodes,Links,T,disjointPaths,sol);
+
+
+fprintf("\nLoads using must available path without protection:\n");
+disp(Loads);
+fprintf("\nTotal bandwidth required on all links: %0.2f\n\n", sum(sum(Loads(:,3:4))) );
+
 
 Loads1Plus1 = Loads;
 Loads1Plus1(:,3:4) = Loads(:,3:4) + newLoads(:,3:4);
-totalLoad = sum(sum(Loads1Plus1(:,3:4)));
 
 fprintf("Loads 1 plus 1:\n");
 disp(Loads1Plus1);
-fprintf("\nTotal bandwidth required on all links: %0.2f\n\n", totalLoad);
+fprintf("\nTotal bandwidth required on all links: %0.2f\n\n", sum(sum(Loads1Plus1(:,3:4))));
 
 fprintf("Links that don't have enough capacity: \n");
 for link = 1:nLinks
@@ -211,14 +216,14 @@ for link = 1:nLinks
         if length(pathdif)<2 || pathdif(2)-pathdif(1)>1
             %link is not in must available path
             auxSP{flow}{1} = path;
-        elseif ~isempty(alternativePaths{flow})
-            %link is in must available path and we have an alternative
-            auxSP{flow}{1} = alternativePaths{flow}{1};
+        elseif ~isempty(disjointPaths{flow})
+            %link is in must available path and we have an disjoint
+            auxSP{flow}{1} = disjointPaths{flow}{1};
         end 
     end
 
     %Calculate link load for a particular link failure
-    %only use flows with an alternative path
+    %only use flows with an disjoint path
     sol = zeros(1,nFlows);
     for i = 1:nFlows
         sol(i) = ~isempty(auxSP{i});
@@ -228,10 +233,9 @@ for link = 1:nLinks
     Loads1To1(:,3:4) = max(Loads1To1(:,3:4), auxLoads(:,3:4)); 
 end
 
-totalLoad = sum(sum(Loads1To1(:,3:4)));
 fprintf("Loads 1 to 1:\n");
 disp(Loads1To1);
-fprintf("\nTotal bandwidth required on all links: %0.2f\n\n", totalLoad);
+fprintf("\nTotal bandwidth required on all links: %0.2f\n\n", sum(sum(Loads1To1(:,3:4))));
 
 fprintf("Links that don't have enough capacity: \n");
 for link = 1:nLinks
