@@ -37,8 +37,7 @@ T= [1  3  1.0 1.0
     6 10  1.4 1.6];
 
 
-nNodes= 10;
-nNodes= 9;
+nNodes= size(Nodes,1);
 nLinks= size(Links,1);
 nFlows= size(T,1);
 
@@ -69,7 +68,6 @@ Alog = -log(A);
 
 %3.a. 
 %   For each flow, compute one of its routing paths given by the most available path.
-
 fprintf("\n---------3.a.---------\n");
 
 %calculate most available path of each flow
@@ -79,7 +77,7 @@ for flow = 1:nFlows
     path = sP{flow}{1};
     
     %print flow path
-    fprintf('\nFlow %d:\n', flow);
+    fprintf('\nFlow %d most available path:\n', flow);
     fprintf('[ ');
     fprintf("%g ",path);
     fprintf(']\n');
@@ -92,7 +90,7 @@ end
 %   provided by each pair of routing paths. Present all pairs of routing paths of each flow and
 %   their availability. Present also the average service availability (i.e., the average availability
 %   value among all flows of the service).
-
+fprintf("\n---------3.b.---------\n");
 
 %calculate most available path of each flow
 [sP, nSP]= calculatePaths(Alog,T,1);
@@ -151,4 +149,94 @@ end
 
 % ??? 
 meanA = mean((pathA1 + pathA2) ./ 2);
-fprintf("\nAverage availability value among all flows of the service: %.5f%%\n", meanA*100);
+fprintf("\n???Average availability value among all flows of the service: %.5f%%???\n", meanA*100);
+
+
+% 3.c.
+%   Recall that the capacity of all links is 10 Gbps in each direction. Compute how much
+%   bandwidth is required on each direction of each link to support all flows with 1+1
+%   protection using the previous computed pairs of link disjoint paths. Compute also the total
+%   bandwidth required on all links. Register which links do not have enough capacity. 
+fprintf("\n---------3.c.---------\n");
+
+%link loads using most available path
+[sP, nSP]= calculatePaths(Alog,T,1);
+Loads= calculateLinkLoads(nNodes,Links,T,sP,ones(1,nFlows));
+
+%calculate link loads for alternative paths
+%only use flows with an alternative path
+sol = zeros(1,nFlows);
+for i = 1:nFlows
+    sol(i) = ~isempty(alternativePaths{i});
+end
+newLoads= calculateLinkLoads(nNodes,Links,T,alternativePaths,sol);
+
+Loads1Plus1 = Loads;
+Loads1Plus1(:,3:4) = Loads(:,3:4) + newLoads(:,3:4);
+totalLoad = sum(sum(Loads1Plus1(:,3:4)));
+
+fprintf("Loads 1 plus 1:\n");
+disp(Loads1Plus1);
+fprintf("\nTotal bandwidth required on all links: %0.2f\n\n", totalLoad);
+
+fprintf("Links that don't have enough capacity: \n");
+for link = 1:nLinks
+    if(Loads1Plus1(link,3) > 10 || Loads1Plus1(link,4) > 10)
+        fprintf("%d - %d\n", Loads1Plus1(link,1), Loads1Plus1(link,2))
+    end
+end
+
+% 3.d.
+%   Compute how much bandwidth is required on each link to support all flows with 1:1
+%   protection using the previous computed pairs of link disjoint paths. Compute also the total
+%   bandwidth required on all links. Register which links do not have enough capacity and
+%   the highest bandwidth value required among all links.
+fprintf("\n---------3.d.---------\n");
+
+%link loads using most available path
+[sP, nSP]= calculatePaths(Alog,T,1);
+Loads= calculateLinkLoads(nNodes,Links,T,sP,ones(1,nFlows));
+
+Loads1To1 = Loads;
+%calculate loads in case of single link failure 
+for link = 1:nLinks
+    node1= Links(link,1);
+    node2= Links(link,2);
+    
+    auxSP = cell(1,nFlows);
+    for flow = 1:nFlows
+        %check if link is in must available path
+        path= sP{flow}{1};
+        pathdif= find(path==node1 | path==node2);
+        if length(pathdif)<2 || pathdif(2)-pathdif(1)>1
+            %link is not in must available path
+            auxSP{flow}{1} = path;
+        elseif ~isempty(alternativePaths{flow})
+            %link is in must available path and we have an alternative
+            auxSP{flow}{1} = alternativePaths{flow}{1};
+        end 
+    end
+
+    %Calculate link load for a particular link failure
+    %only use flows with an alternative path
+    sol = zeros(1,nFlows);
+    for i = 1:nFlows
+        sol(i) = ~isempty(auxSP{i});
+    end
+    auxLoads= calculateLinkLoads(nNodes,Links,T,auxSP,sol);
+    
+    Loads1To1(:,3:4) = max(Loads1To1(:,3:4), auxLoads(:,3:4)); 
+end
+
+totalLoad = sum(sum(Loads1To1(:,3:4)));
+fprintf("Loads 1 to 1:\n");
+disp(Loads1To1);
+fprintf("\nTotal bandwidth required on all links: %0.2f\n\n", totalLoad);
+
+fprintf("Links that don't have enough capacity: \n");
+for link = 1:nLinks
+    if(Loads1To1(link,3) > 10 || Loads1To1(link,4) > 10)
+        fprintf("%d - %d\n", Loads1Plus1(link,1), Loads1Plus1(link,2))
+    end
+end
+
