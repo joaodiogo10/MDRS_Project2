@@ -82,8 +82,6 @@ while toc(t)<10
             energy = energy + L(route(j),route(j+1));
         end
     end
-    Loads= calculateLinkLoads(nNodes,Links,T,sP,sol);
-    load= max(max(Loads(:,3:4)));
     allValues= [allValues energy];
    
     if energy<bestEnergy  %check if load exceeds maximum capacity (10 Gbps)
@@ -114,8 +112,6 @@ while toc(t)<10
             energy = energy + L(route(j),route(j+1));
         end
     end
-    Loads= calculateLinkLoads(nNodes,Links,T,sP,sol);
-    load= max(max(Loads(:,3:4)));
     allValues= [allValues energy];
    
     if energy<bestEnergy  %check if load exceeds maximum capacity (10 Gbps)
@@ -144,8 +140,6 @@ while toc(t)<10
             energy = energy + L(route(j),route(j+1));
         end
     end
-    Loads= calculateLinkLoads(nNodes,Links,T,sP,sol);
-    load= max(max(Loads(:,3:4)));
     allValues= [allValues energy];
    
     if energy<bestEnergy  %check if load exceeds maximum capacity (10 Gbps)
