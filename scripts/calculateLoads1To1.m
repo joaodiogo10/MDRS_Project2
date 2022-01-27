@@ -10,10 +10,10 @@
 % Note: a K must available routing path together with a k disjoint
 %       path form a disjount pair
 
-function Loads=calculateLoads1To1(nNodes,Links,T,sP,disjointPaths, sol)
+function Loads1To1=calculateLoads1To1(nNodes,Links,T,sP,disjointPaths, sol)
     nFlows = size(sP,2);
     nLinks = size(Links,1);
-    %link loads using most available path
+    %link loads using 1º path
     Loads= calculateLinkLoads(nNodes,Links,T,sP,sol);
     
     Loads1To1 = Loads;
@@ -21,19 +21,23 @@ function Loads=calculateLoads1To1(nNodes,Links,T,sP,disjointPaths, sol)
     for link = 1:nLinks
         node1= Links(link,1);
         node2= Links(link,2);
-        
+
         auxSP = cell(1,nFlows);
+
         for flow = 1:nFlows
-            %check if link is in must available path
-            path= sP{flow}{1};
-            pathdif= find(path==node1 | path==node2);
-            if length(pathdif)<2 || pathdif(2)-pathdif(1)>1
-                %link is not in must available path
-                auxSP{flow}{1} = path;
-            elseif ~isempty(disjointPaths{flow})
-                %link is in must available path and we have an disjoint
-                auxSP{flow}{1} = disjointPaths{flow}{1};
-            end 
+            k = sol(flow);
+            if(k > 0)
+                %check if link is in 1º solution path
+                path= sP{flow}{k};
+                pathdif= find(path==node1 | path==node2);
+                if length(pathdif)<2 || pathdif(2)-pathdif(1)>1
+                    %link is not in 1º solution path
+                    auxSP{flow}{k} = path;
+                elseif ~isempty(disjointPaths{flow}{k})
+                    %link is in 1º solution path and we have a disjoint path
+                    auxSP{flow}{k} = disjointPaths{flow}{k};
+                end
+            end
         end
     
         %Calculate link load for a particular link failure
