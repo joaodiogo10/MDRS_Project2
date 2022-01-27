@@ -61,14 +61,6 @@ for i=1:nLinks
 end
 L= round(L);  %Km
 
-%MTBF calculation
-MTBF= (450*365*24)./L;
-A= MTBF./(MTBF + 24);
-A(isnan(A))= 0;
-
-%log transformation
-Alog = -log(A);
-
 %1.a.
 fprintf("\n---------1.a.---------\n");
 
