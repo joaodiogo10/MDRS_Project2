@@ -106,6 +106,8 @@ fprintf('   Best load = %.2f Gbps\n',bestLoad);
 fprintf('   Worst load = %.2f Gbps\n',worstLoad);
 fprintf('   No. of solutions = %d\n',length(allValues));
 fprintf('   Av. quality of solutions = %.2f Gbps\n',mean(allValues));
+fprintf('   Best solution: \n')
+disp(bestSol)
 
 %1.b.ii
 %Optimization algorithm resorting to the random strategy: (10 shortest
@@ -136,6 +138,8 @@ fprintf('   Best load = %.2f Gbps\n',bestLoad);
 fprintf('   Worst load = %.2f Gbps\n',worstLoad);
 fprintf('   No. of solutions = %d\n',length(allValues));
 fprintf('   Av. quality of solutions = %.2f Gbps\n',mean(allValues));
+fprintf('   Best solution: \n')
+disp(bestSol)
 
 %1.b.iii
 %Optimization algorithm resorting to the random strategy: (5 shortest
@@ -162,12 +166,16 @@ while toc(t)<10
 end
 plot(sort(allValues));
 legend('Random strategy','Random strategy (10 shortest paths)','Random strategy (5 shortest paths)', 'Location', 'northwest');
-
+title('Link Load - Random Strategy')
+ylabel('link load (Gbps)')
+xlabel('no of solutions')
 fprintf('RANDOM STRATEGY (5 shortest paths):\n');
 fprintf('   Best load = %.2f Gbps\n',bestLoad);
 fprintf('   Worst load = %.2f Gbps\n',worstLoad);
 fprintf('   No. of solutions = %d\n',length(allValues));
 fprintf('   Av. quality of solutions = %.2f Gbps\n',mean(allValues));
+fprintf('   Best solution: \n')
+disp(bestSol)
 
 fprintf("\n---------1.c.---------\n");
 %1.c.i
@@ -211,6 +219,8 @@ fprintf('   Best load = %.2f Gbps\n',bestLoad);
 fprintf('   Worst load = %.2f Gbps\n',worstLoad);
 fprintf('   No. of solutions = %d\n',length(allValues));
 fprintf('   Av. quality of solutions = %.2f Gbps\n',mean(allValues));
+fprintf('   Best solution: \n')
+disp(bestSol)
 
 %1.c.ii
 %Optimization algorithm with greedy randomized (10 shortest paths):
@@ -252,6 +262,8 @@ fprintf('   Best load = %.2f Gbps\n',bestLoad);
 fprintf('   Worst load = %.2f Gbps\n',worstLoad);
 fprintf('   No. of solutions = %d\n',length(allValues));
 fprintf('   Av. quality of solutions = %.2f Gbps\n',mean(allValues));
+fprintf('   Best solution: \n')
+disp(bestSol)
 
 %1.c.iii
 %Optimization algorithm with greedy randomized (5 shortest paths):
@@ -288,12 +300,16 @@ while toc(t)<10
 end
 plot(sort(allValues));
 legend('Greedy Randomized','Greedy Randomized (10 shortest paths)','Greedy Randomized (5 shortest paths)', 'Location', 'southeast');
-
+title('Link Load - Greedy Randomized')
+ylabel('link load (Gbps)')
+xlabel('no of solutions')
 fprintf('GREEDY RANDOMIZED (5 shortest paths):\n');
 fprintf('   Best load = %.2f Gbps\n',bestLoad);
 fprintf('   Worst load = %.2f Gbps\n',worstLoad);
 fprintf('   No. of solutions = %d\n',length(allValues));
 fprintf('   Av. quality of solutions = %.2f Gbps\n',mean(allValues));
+fprintf('   Best solution: \n')
+disp(bestSol)
 
 fprintf("\n---------1.d.---------\n");
 
@@ -371,6 +387,8 @@ fprintf('   Best load = %.2f Gbps\n',bestLoad);
 fprintf('   Worst load = %.2f Gbps\n',worstLoad);
 fprintf('   No. of solutions = %d\n',length(allValues));
 fprintf('   Av. quality of solutions = %.2f Gbps\n',mean(allValues));
+fprintf('   Best solution: \n')
+disp(bestSol)
 
 
 %1.d.ii
@@ -446,6 +464,8 @@ fprintf('   Best load = %.2f Gbps\n',bestLoad);
 fprintf('   Worst load = %.2f Gbps\n',worstLoad);
 fprintf('   No. of solutions = %d\n',length(allValues));
 fprintf('   Av. quality of solutions = %.2f Gbps\n',mean(allValues));
+fprintf('   Best solution: \n')
+disp(bestSol)
 
 
 %1.d.iii
@@ -516,9 +536,13 @@ end
 
 plot(sort(allValues));
 legend('Hill Climbing', 'Hill Climbing (10 shortest paths)','Hill Climbing (5 shortest paths)', 'Location', 'northwest');
-
+title('Link Load - Hill Climbing')
+ylabel('link load (Gbps)')
+xlabel('no of solutions')
 fprintf('MULTI START HILL CLIMBING (5 shortest paths):\n');
 fprintf('   Best load = %.2f Gbps\n',bestLoad);
 fprintf('   Worst load = %.2f Gbps\n',worstLoad);
 fprintf('   No. of solutions = %d\n',length(allValues));
 fprintf('   Av. quality of solutions = %.2f Gbps\n',mean(allValues));
+fprintf('   Best solution: \n')
+disp(bestSol)
