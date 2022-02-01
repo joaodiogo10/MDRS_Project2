@@ -82,8 +82,6 @@ while toc(t)<10
             energy = energy + L(route(j),route(j+1));
         end
     end
-    Loads= calculateLinkLoads(nNodes,Links,T,sP,sol);
-    load= max(max(Loads(:,3:4)));
     allValues= [allValues energy];
    
     if energy<bestEnergy  %check if load exceeds maximum capacity (10 Gbps)
@@ -98,6 +96,8 @@ fprintf("------Random algorithm------\n");
 fprintf('   Best energy = %.1f\n',bestEnergy);
 fprintf('   No. of solutions = %d\n',length(allValues));
 fprintf('   Av. quality of solutions = %.1f\n',mean(allValues));
+fprintf('   Best solution: \n')
+disp(bestSol)
 
 %1.a.ii
 %Optimization algorithm resorting to the random strategy (10 shortest paths):
@@ -114,8 +114,6 @@ while toc(t)<10
             energy = energy + L(route(j),route(j+1));
         end
     end
-    Loads= calculateLinkLoads(nNodes,Links,T,sP,sol);
-    load= max(max(Loads(:,3:4)));
     allValues= [allValues energy];
    
     if energy<bestEnergy  %check if load exceeds maximum capacity (10 Gbps)
@@ -128,6 +126,8 @@ fprintf("------Random algorithm (10 shortest paths)------\n");
 fprintf('   Best energy = %.1f\n',bestEnergy);
 fprintf('   No. of solutions = %d\n',length(allValues));
 fprintf('   Av. quality of solutions = %.1f\n',mean(allValues));
+fprintf('   Best solution: \n')
+disp(bestSol)
 
 %1.a.iii
 %Optimization algorithm resorting to the random strategy (5 shortest paths):
@@ -144,8 +144,6 @@ while toc(t)<10
             energy = energy + L(route(j),route(j+1));
         end
     end
-    Loads= calculateLinkLoads(nNodes,Links,T,sP,sol);
-    load= max(max(Loads(:,3:4)));
     allValues= [allValues energy];
    
     if energy<bestEnergy  %check if load exceeds maximum capacity (10 Gbps)
@@ -154,11 +152,17 @@ while toc(t)<10
     end
 end
 plot(sort(allValues));
+title('Energy - Random Strategy')
 legend('Random strategy','Random strategy (10 shortest paths)','Random strategy (5 shortest paths)', 'Location', 'northwest');
+ylabel('energy')
+xlabel('no of solutions')
 fprintf("------Random algorithm (5 shortest paths)------\n");
 fprintf('   Best energy = %.1f\n',bestEnergy);
 fprintf('   No. of solutions = %d\n',length(allValues));
 fprintf('   Av. quality of solutions = %.1f\n',mean(allValues));
+fprintf('   Best solution: \n')
+disp(bestSol)
+
 
 fprintf("\n---------1.b.---------\n");
 %1.b.i
@@ -216,6 +220,8 @@ fprintf('GREEDY RANDOMIZED:\n');
 fprintf('   Best energy = %.1f\n',bestEnergy);
 fprintf('   No. of solutions = %d\n',length(allValues));
 fprintf('   Av. quality of solutions = %.1f\n',mean(allValues));
+fprintf('   Best solution: \n')
+disp(bestSol)
 
 %1.b.ii
 %Optimization algorithm with greedy randomized (10 shortest paths):
@@ -270,6 +276,8 @@ fprintf('GREEDY RANDOMIZED (10 shortest paths):\n');
 fprintf('   Best energy = %.1f\n',bestEnergy);
 fprintf('   No. of solutions = %d\n',length(allValues));
 fprintf('   Av. quality of solutions = %.1f\n',mean(allValues));
+fprintf('   Best solution: \n')
+disp(bestSol)
 
 %1.b.iii
 %Optimization algorithm with greedy randomized (5 shortest paths):
@@ -320,11 +328,17 @@ while toc(t)<10
     end
 end
 plot(sort(allValues));
+title('Energy - Greedy Randomized')
 legend('Greedy Randomized','Greedy Randomized (10 shortest paths)','Greedy Randomized (5 shortest paths)', 'Location', 'southeast');
+ylabel('energy')
+xlabel('no of solutions')
 fprintf('GREEDY RANDOMIZED (5 shortest paths):\n');
 fprintf('   Best energy = %.1f\n',bestEnergy);
 fprintf('   No. of solutions = %d\n',length(allValues));
 fprintf('   Av. quality of solutions = %.1f\n',mean(allValues));
+fprintf('   Best solution: \n')
+disp(bestSol)
+
 
 fprintf("\n---------1.c.---------\n");
 %1.c.i
@@ -424,6 +438,8 @@ fprintf('MULTI START HILL CLIMBING:\n');
 fprintf('   Best energy = %.1f\n',bestEnergy);
 fprintf('   No. of solutions = %d\n',length(allValues));
 fprintf('   Av. quality of solutions = %.1f\n',mean(allValues));
+fprintf('   Best solution: \n')
+disp(bestSol)
 
 %1.c.ii
 %Optimization algorithm with multi start hill climbing (10 shortest paths):
@@ -520,6 +536,8 @@ fprintf('MULTI START HILL CLIMBING (10 shortest paths):\n');
 fprintf('   Best energy = %.1f\n',bestEnergy);
 fprintf('   No. of solutions = %d\n',length(allValues));
 fprintf('   Av. quality of solutions = %.1f\n',mean(allValues));
+fprintf('   Best solution: \n')
+disp(bestSol)
 
 %1.c.iii
 %Optimization algorithm with multi start hill climbing (5 shortest paths):
@@ -611,9 +629,13 @@ while toc(t)<10
     end
 end
 plot(sort(allValues));
+title('Energy - Hill Climbing')
 legend('Hill Climbing', 'Hill Climbing (10 shortest paths)','Hill Climbing (5 shortest paths)', 'Location', 'southeast');
-
+ylabel('energy')
+xlabel('no of solutions')
 fprintf('MULTI START HILL CLIMBING (5 shortest paths):\n');
 fprintf('   Best energy = %.1f\n',bestEnergy);
 fprintf('   No. of solutions = %d\n',length(allValues));
 fprintf('   Av. quality of solutions = %.1f\n',mean(allValues));
+fprintf('   Best solution: \n')
+disp(bestSol)
