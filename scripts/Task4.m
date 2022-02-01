@@ -90,7 +90,7 @@ for flow = 1:nFlows
 
         tmpAlog = Alog;
         %remove all links of k most available path 
-        for node = 2:size(sP{flow}{1},2)
+        for node = 2:size(sP{flow}{k},2)
             tmpAlog(sP{flow}{k}(node), sP{flow}{k}(node-1)) = inf;
             tmpAlog(sP{flow}{k}(node-1), sP{flow}{k}(node)) = inf;
         end
@@ -134,7 +134,7 @@ t= tic;
 bestLoad= inf;
 sol= zeros(1,nFlows);
 allValues= [];
-while toc(t)<1
+while toc(t)<time
     sol= zeros(1,nFlows);
     for i = 1:nFlows
         sol(i)= randi(nSP(i));

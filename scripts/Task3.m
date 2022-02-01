@@ -101,7 +101,7 @@ pathA1 = ones(1,nFlows);      %must available path availability
 pathA2 = ones(1,nFlows);      %disjoint path availability
 
 for flow = 1:nFlows   
-    %compute availability must available path
+    %compute availability of most available path
     for node = 2:size(sP{flow}{1},2)
         availability = A(sP{flow}{1}(node), sP{flow}{1}(node-1)); 
         pathA1(flow) = pathA1(flow) * availability;
@@ -143,7 +143,7 @@ for flow = 1:nFlows
         fprintf('[ ');
         fprintf("%g ",disjointPaths{flow}{1});
         fprintf(']\n');
-        fprintf("   Disjoint path availability: %.4%%\n", pathA2(flow)*100);
+        fprintf("   Disjoint path availability: %.4f%%\n", pathA2(flow)*100);
     end
 end
 
@@ -171,13 +171,10 @@ for i = 1:nFlows
 end
 newLoads= calculateLinkLoads(nNodes,Links,T,disjointPaths,sol);
 
-
 fprintf("\nLoads using must available path without protection:\n");
 disp(Loads);
 fprintf("\nTotal bandwidth required on all links: %0.2f Gbps\n\n", sum(sum(Loads(:,3:4))) );
 
-
-Loads1Plus1 = Loads;
 Loads1Plus1(:,3:4) = Loads(:,3:4) + newLoads(:,3:4);
 
 fprintf("Loads 1 plus 1:\n");
