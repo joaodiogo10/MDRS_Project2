@@ -74,17 +74,23 @@ bestEnergy= inf;
 sol= zeros(1,nFlows);
 allValues= [];
 while toc(t)<10
-    energy = 0;
     for i= 1:nFlows
         sol(i)= randi(nSP(i));
-        route = sP{i}{sol(i)};
-        for j = 1:(size(route,2)-1)
-            energy = energy + L(route(j),route(j+1));
+    end
+    Loads= calculateLinkLoads(nNodes,Links,T,sP,sol);
+    load= max(max(Loads(:,3:4)));
+    if load <= 10
+        energy= 0;
+        for a= 1:nLinks
+            if Loads(a,3)+Loads(a,4)>0
+                energy= energy + L(Loads(a,1),Loads(a,2));
+            end
         end
+    else
+        energy= inf;
     end
     allValues= [allValues energy];
-   
-    if energy<bestEnergy  %check if load exceeds maximum capacity (10 Gbps)
+    if energy<bestEnergy
         bestSol= sol;
         bestEnergy= energy;
     end
@@ -106,17 +112,23 @@ bestEnergy= inf;
 sol= zeros(1,nFlows);
 allValues= [];
 while toc(t)<10
-    energy = 0;
     for i= 1:nFlows
         sol(i)= randi(10);
-        route = sP{i}{sol(i)};
-        for j = 1:(size(route,2)-1)
-            energy = energy + L(route(j),route(j+1));
+    end
+    Loads= calculateLinkLoads(nNodes,Links,T,sP,sol);
+    load= max(max(Loads(:,3:4)));
+    if load <= 10
+        energy= 0;
+        for a= 1:nLinks
+            if Loads(a,3)+Loads(a,4)>0
+                energy= energy + L(Loads(a,1),Loads(a,2));
+            end
         end
+    else
+        energy= inf;
     end
     allValues= [allValues energy];
-   
-    if energy<bestEnergy  %check if load exceeds maximum capacity (10 Gbps)
+    if energy<bestEnergy
         bestSol= sol;
         bestEnergy= energy;
     end
@@ -136,24 +148,30 @@ bestEnergy= inf;
 sol= zeros(1,nFlows);
 allValues= [];
 while toc(t)<10
-    energy = 0;
     for i= 1:nFlows
         sol(i)= randi(5);
-        route = sP{i}{sol(i)};
-        for j = 1:(size(route,2)-1)
-            energy = energy + L(route(j),route(j+1));
+    end
+    Loads= calculateLinkLoads(nNodes,Links,T,sP,sol);
+    load= max(max(Loads(:,3:4)));
+    if load <= 10
+        energy= 0;
+        for a= 1:nLinks
+            if Loads(a,3)+Loads(a,4)>0
+                energy= energy + L(Loads(a,1),Loads(a,2));
+            end
         end
+    else
+        energy= inf;
     end
     allValues= [allValues energy];
-   
-    if energy<bestEnergy  %check if load exceeds maximum capacity (10 Gbps)
+    if energy<bestEnergy
         bestSol= sol;
         bestEnergy= energy;
     end
 end
 plot(sort(allValues));
 title('Energy - Random Strategy')
-legend('Random strategy','Random strategy (10 shortest paths)','Random strategy (5 shortest paths)', 'Location', 'northwest');
+legend('Random strategy','Random strategy (10 shortest paths)','Random strategy (5 shortest paths)', 'Location', 'southeast');
 ylabel('energy')
 xlabel('no of solutions')
 fprintf("------Random algorithm (5 shortest paths)------\n");
