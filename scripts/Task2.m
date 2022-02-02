@@ -79,22 +79,26 @@ while toc(t)<10
     end
     Loads= calculateLinkLoads(nNodes,Links,T,sP,sol);
     load= max(max(Loads(:,3:4)));
-    if load <= 10
-        energy= 0;
-        for a= 1:nLinks
-            if Loads(a,3)+Loads(a,4)>0
-                energy= energy + L(Loads(a,1),Loads(a,2));
-            end
-        end
-    else
-        energy= inf;
+
+    if load > 10 %check if load exceeds maxinum capacity (10 Gbps)
+        continue
     end
+    
+    energy= 0;
+    for a= 1:nLinks
+        if Loads(a,3)+Loads(a,4)>0
+            energy= energy + L(Loads(a,1),Loads(a,2));
+        end
+    end
+
     allValues= [allValues energy];
+
     if energy<bestEnergy
         bestSol= sol;
         bestEnergy= energy;
     end
 end
+
 figure(1);
 hold on
 plot(sort(allValues));
@@ -117,16 +121,18 @@ while toc(t)<10
     end
     Loads= calculateLinkLoads(nNodes,Links,T,sP,sol);
     load= max(max(Loads(:,3:4)));
-    if load <= 10
-        energy= 0;
-        for a= 1:nLinks
-            if Loads(a,3)+Loads(a,4)>0
-                energy= energy + L(Loads(a,1),Loads(a,2));
-            end
-        end
-    else
-        energy= inf;
+    
+    if load > 10 %check if load exceeds maxinum capacity (10 Gbps)
+        continue
     end
+    
+    energy= 0;
+    for a= 1:nLinks
+        if Loads(a,3)+Loads(a,4)>0
+            energy= energy + L(Loads(a,1),Loads(a,2));
+        end
+    end
+
     allValues= [allValues energy];
     if energy<bestEnergy
         bestSol= sol;
@@ -153,16 +159,18 @@ while toc(t)<10
     end
     Loads= calculateLinkLoads(nNodes,Links,T,sP,sol);
     load= max(max(Loads(:,3:4)));
-    if load <= 10
-        energy= 0;
-        for a= 1:nLinks
-            if Loads(a,3)+Loads(a,4)>0
-                energy= energy + L(Loads(a,1),Loads(a,2));
-            end
-        end
-    else
-        energy= inf;
+    
+    if load > 10 %check if load exceeds maxinum capacity (10 Gbps)
+        continue
     end
+    
+    energy= 0;
+    for a= 1:nLinks
+        if Loads(a,3)+Loads(a,4)>0
+            energy= energy + L(Loads(a,1),Loads(a,2));
+        end
+    end
+    
     allValues= [allValues energy];
     if energy<bestEnergy
         bestSol= sol;
